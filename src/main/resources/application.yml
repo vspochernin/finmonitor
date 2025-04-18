@@ -16,3 +16,7 @@ spring:
     flyway:
         enabled: true
         locations: classpath:db/migration
+
+jwt:
+    secret: secret-key-for-jwt-at-least-32-characters
+    expiration: 31536000000 # 1 год.
