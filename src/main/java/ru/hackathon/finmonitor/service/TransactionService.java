@@ -4,8 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.hackathon.finmonitor.controller.dto.TransactionConverter;
+import ru.hackathon.finmonitor.controller.dto.TransactionDto;
+import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
 import ru.hackathon.finmonitor.model.Transaction;
 import ru.hackathon.finmonitor.repository.TransactionRepository;
+import ru.hackathon.finmonitor.repository.TransactionSpecification;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,5 +60,10 @@ public class TransactionService {
     @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<Transaction> filterTransactions(TransactionFilterDto filterDto) {
+        var specification = TransactionSpecification.withFilters(filterDto);
+        return repository.findAll(specification).stream().toList();
     }
 }

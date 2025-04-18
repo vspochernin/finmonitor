@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hackathon.finmonitor.controller.dto.TransactionConverter;
 import ru.hackathon.finmonitor.controller.dto.TransactionDto;
+import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
 import ru.hackathon.finmonitor.model.Transaction;
 import ru.hackathon.finmonitor.service.TransactionService;
 
@@ -64,5 +65,11 @@ public class TransactionController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<List<TransactionDto>> filter(@RequestBody TransactionFilterDto filterDto) {
+        List<Transaction> result = (service.filterTransactions(filterDto));
+        return ResponseEntity.ok(result.stream().map(converter::toDto).toList());
     }
 }
