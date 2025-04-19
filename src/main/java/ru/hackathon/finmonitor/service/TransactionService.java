@@ -13,10 +13,18 @@ import ru.hackathon.finmonitor.repository.TransactionSpecification;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
+
+    private static final Set<TransactionStatus> FORBIDDEN_DELETION_STATUSES = Set.of(
+            TransactionStatus.CONFIRMED,
+            TransactionStatus.IN_PROCESS,
+            TransactionStatus.CANCELED,
+            TransactionStatus.COMPLETED,
+            TransactionStatus.RETURNED);
 
     private final TransactionRepository repository;
 
@@ -66,7 +74,7 @@ public class TransactionService {
                         FinmonitorErrorType.NOT_FOUND,
                         "Транзакция со следующим id не найдена: " + id));
 
-        if (isDeletionForbidden(transaction.getStatus())) {
+        if (FORBIDDEN_DELETION_STATUSES.contains(transaction.getStatus())) {
             throw new FinmonitorException(
                     FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN,
                     "Статус транзакции: " + transaction.getStatus());
@@ -74,14 +82,6 @@ public class TransactionService {
 
         transaction.setStatus(TransactionStatus.DELETED);
         repository.save(transaction);
-    }
-
-    private boolean isDeletionForbidden(TransactionStatus status) {
-        return status == TransactionStatus.CONFIRMED ||
-                status == TransactionStatus.IN_PROCESS ||
-                status == TransactionStatus.CANCELED ||
-                status == TransactionStatus.COMPLETED ||
-                status == TransactionStatus.RETURNED;
     }
 
     public List<Transaction> filterTransactions(TransactionFilterDto filterDto) {
