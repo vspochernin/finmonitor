@@ -7,6 +7,7 @@ import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
 import ru.hackathon.finmonitor.exception.FinmonitorErrorType;
 import ru.hackathon.finmonitor.exception.FinmonitorException;
 import ru.hackathon.finmonitor.model.Transaction;
+import ru.hackathon.finmonitor.model.TransactionStatus;
 import ru.hackathon.finmonitor.repository.TransactionRepository;
 import ru.hackathon.finmonitor.repository.TransactionSpecification;
 
@@ -60,7 +61,28 @@ public class TransactionService {
 
     @Transactional
     public void delete(Long id) {
-        repository.deleteById(id);
+        Transaction transaction = repository.findById(id)
+                .orElseThrow(() -> new FinmonitorException(
+                        FinmonitorErrorType.NOT_FOUND,
+                        "Транзакция со следующим id не найдена: " + id));
+
+        if (isDeletionForbidden(transaction.getStatus())) {
+            throw new FinmonitorException(
+                    FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN,
+                    String.format("Удаление транзакции со статусом %s запрещено", transaction.getStatus())
+            );
+        }
+
+        transaction.setStatus(TransactionStatus.DELETED);
+        repository.save(transaction);
+    }
+
+    private boolean isDeletionForbidden(TransactionStatus status) {
+        return status == TransactionStatus.CONFIRMED ||
+                status == TransactionStatus.IN_PROCESS ||
+                status == TransactionStatus.CANCELED ||
+                status == TransactionStatus.COMPLETED ||
+                status == TransactionStatus.RETURNED;
     }
 
     public List<Transaction> filterTransactions(TransactionFilterDto filterDto) {
