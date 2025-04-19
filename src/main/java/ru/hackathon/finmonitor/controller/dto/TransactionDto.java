@@ -7,7 +7,6 @@ import ru.hackathon.finmonitor.model.TransactionStatus;
 import ru.hackathon.finmonitor.model.TransactionType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class TransactionDto {
@@ -16,7 +15,7 @@ public class TransactionDto {
 
     private PersonType personType;
 
-    private LocalDateTime operationDateTime;
+    private String operationDateTime;
 
     private TransactionType transactionType;
 

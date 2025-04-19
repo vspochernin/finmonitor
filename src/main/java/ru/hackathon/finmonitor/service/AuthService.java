@@ -5,6 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.hackathon.finmonitor.dto.auth.RegisterRequest;
 import ru.hackathon.finmonitor.dto.auth.RegisterResponse;
+import ru.hackathon.finmonitor.exception.FinmonitorErrorType;
+import ru.hackathon.finmonitor.exception.FinmonitorException;
 import ru.hackathon.finmonitor.model.User;
 import ru.hackathon.finmonitor.model.UserRole;
 import ru.hackathon.finmonitor.repository.UserRepository;
@@ -18,7 +20,7 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Такой логин уже занят");
+            throw new FinmonitorException(FinmonitorErrorType.LOGIN_EXISTS);
         }
 
         User user = new User();
