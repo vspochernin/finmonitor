@@ -3,23 +3,19 @@ package ru.hackathon.finmonitor.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hackathon.finmonitor.controller.dto.Dashboard;
 import ru.hackathon.finmonitor.controller.dto.TransactionConverter;
 import ru.hackathon.finmonitor.controller.dto.TransactionDto;
 import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
+import ru.hackathon.finmonitor.model.Period;
 import ru.hackathon.finmonitor.model.Transaction;
 import ru.hackathon.finmonitor.service.TransactionDashboardService;
 import ru.hackathon.finmonitor.service.TransactionService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -77,15 +73,15 @@ public class TransactionController {
     }
 
     @PostMapping("/dashboard/OperationDynamics")
-    public ResponseEntity<Dashboard.OperationDynamics> operationDynamicsResponseEntity(@RequestBody TransactionFilterDto filterDto) {
+    public ResponseEntity<Map<String, Long>> operationDynamicsResponseEntity(@RequestParam("period") Period period, @RequestBody TransactionFilterDto filterDto) {
         List<Transaction> result = (service.filterTransactions(filterDto));
-        return ResponseEntity.ok(transactionDashboardService.getOperationDynamics(result));
+        return ResponseEntity.ok(transactionDashboardService.getOperationDynamics(result, period).getPeriod());
     }
 
     @PostMapping("/dashboard/OperationTypeDynamics")
-    public ResponseEntity<Dashboard.OperationTypeDynamics> operationTypeDynamicsResponseEntity(@RequestBody TransactionFilterDto filterDto) {
+    public ResponseEntity<Dashboard.OperationTypeDynamics> operationTypeDynamicsResponseEntity(@RequestParam("period") Period period, @RequestBody TransactionFilterDto filterDto) {
         List<Transaction> result = (service.filterTransactions(filterDto));
-        return ResponseEntity.ok(transactionDashboardService.getOperationsTypeDynamics(result));
+        return ResponseEntity.ok(transactionDashboardService.getOperationsTypeDynamics(result, period));
     }
 
     @PostMapping("/dashboard/IncomeExpensesComparison")

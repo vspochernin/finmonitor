@@ -6,7 +6,6 @@ import ru.hackathon.finmonitor.model.Category;
 import ru.hackathon.finmonitor.model.Period;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Dashboard {
@@ -14,14 +13,14 @@ public class Dashboard {
     // Динамика по количеству операций в разрезе неделя/месяц/квартал/год.
     @Data
     public static class OperationDynamics {
-        Map<Period, Long> period = new HashMap<>();
+        Map<String, Long> period;
     }
 
     // Динамика по типу операции (отдельно по доходам, отдельно по расходам).
     @Data
     public static class OperationTypeDynamics {
-        Map<Period, Long> periodDebit;
-        Map<Period, Long> periodCredit;
+        Map<String, Long> periodDebit;
+        Map<String, Long> periodCredit;
     }
 
     // Сравнение количества поступивших средств и потраченных.
@@ -41,8 +40,8 @@ public class Dashboard {
     // Статистика по банкам отправителя и банкам получателей.
     @Data
     public static class BankStatistics {
-        Map<Bank, BigDecimal> bankSender ;
-        Map<Bank, BigDecimal> bankReceiver ;
+        Map<Bank, BigDecimal> bankSender;
+        Map<Bank, BigDecimal> bankReceiver;
 
     }
 
