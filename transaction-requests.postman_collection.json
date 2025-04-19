@@ -98,7 +98,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"personType\": \"PHYSICAL\",\n  \"operationDateTime\": \"2025-04-19T12:00:00\",\n  \"transactionType\": \"CREDIT\",\n  \"comment\": \"Test transaction\",\n  \"amount\": 1000.00,\n  \"status\": \"NEW\",\n  \"senderBankId\": 1,\n  \"senderAccountId\": 10,\n  \"receiverBankId\": 2,\n  \"receiverAccountId\": 20,\n  \"receiverInn\": \"1234567890\",\n  \"categoryId\": 1,\n  \"receiverPhone\": \"+79001234567\"\n}"
+          "raw": "{\n  \"personType\": \"PHYSICAL\",\n  \"operationDateTime\": \"2025-04-19T12:00:00\",\n  \"transactionType\": \"CREDIT\",\n  \"comment\": \"Test transaction\",\n  \"amount\": 1000.00,\n  \"status\": \"NEW\",\n  \"senderBankId\": 1,\n  \"senderAccountId\": 1,\n  \"receiverBankId\": 2,\n  \"receiverAccountId\": 2,\n  \"receiverInn\": \"1234567890\",\n  \"categoryId\": 1,\n  \"receiverPhone\": \"+79001234567\"\n}"
         },
         "url": {
           "raw": "http://localhost:8080/api/transactions",
