@@ -53,12 +53,8 @@ public class TransactionController {
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDto> update(@PathVariable Long id,
                                                  @RequestBody TransactionDto dto) {
-        try {
-            Transaction updated = service.update(id, converter.toEntity(dto));
-            return ResponseEntity.ok(converter.toDto(updated));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Transaction updated = service.update(id, converter.toEntity(dto));
+        return ResponseEntity.ok(converter.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
