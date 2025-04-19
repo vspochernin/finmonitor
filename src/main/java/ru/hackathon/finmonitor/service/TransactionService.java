@@ -1,12 +1,11 @@
 package ru.hackathon.finmonitor.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.hackathon.finmonitor.controller.dto.TransactionConverter;
-import ru.hackathon.finmonitor.controller.dto.TransactionDto;
 import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
+import ru.hackathon.finmonitor.exception.FinmonitorErrorType;
+import ru.hackathon.finmonitor.exception.FinmonitorException;
 import ru.hackathon.finmonitor.model.Transaction;
 import ru.hackathon.finmonitor.repository.TransactionRepository;
 import ru.hackathon.finmonitor.repository.TransactionSpecification;
@@ -39,7 +38,9 @@ public class TransactionService {
     @Transactional
     public Transaction update(Long id, Transaction changed) {
         Transaction current = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Transaction " + id + " not found"));
+                .orElseThrow(() -> new FinmonitorException(
+                        FinmonitorErrorType.NOT_FOUND,
+                        "Транзакция со следующим id не найдена: " + id));
         // копируем вручную или через BeanUtils / MapStruct
         current.setPersonType(changed.getPersonType());
         current.setOperationDateTime(changed.getOperationDateTime());
