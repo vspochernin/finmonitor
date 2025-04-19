@@ -22,49 +22,66 @@ public class TransactionDashboardService {
 
     public Dashboard.OperationDynamics getOperationDynamics(List<Transaction> transactions, Period period) {
         Dashboard.OperationDynamics operationDynamics = new Dashboard.OperationDynamics();
+        List<Transaction> newTransaction = new ArrayList<>(transactions);
+        newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+        Map<String, Long> map = new LinkedHashMap<>();
         switch (period) {
-            case WEEK -> {
-                operationDynamics.setPeriod(getTransactionCountByWeek(transactions));
-            }
-            case MONTH -> {
-                operationDynamics.setPeriod(getTransactionCountByMonth(transactions));
-            }
-            case QUARTER -> {
-                operationDynamics.setPeriod(getTransactionCountByQuarter(transactions));
-            }
-            case YEAR -> {
-                operationDynamics.setPeriod(getTransactionCountByYear(transactions));
-            }
+            case WEEK -> map = getTransactionCountByWeek(newTransaction);
+            case MONTH -> map = getTransactionCountByMonth(newTransaction);
+            case QUARTER -> map = getTransactionCountByQuarter(newTransaction);
+            case YEAR -> map = getTransactionCountByYear(newTransaction);
         }
-        return null;
+        operationDynamics.setPeriod(map);
+        return operationDynamics;
     }
 
     public Dashboard.OperationTypeDynamics getOperationsTypeDynamics(List<Transaction> transactions, Period period) {
         Dashboard.OperationTypeDynamics operationTypeDynamics = new Dashboard.OperationTypeDynamics();
+        List<Transaction> newTransaction;
         switch (period) {
             case WEEK -> {
-                operationTypeDynamics.setPeriodCredit(getTransactionCountByWeek(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList()));
-                operationTypeDynamics.setPeriodDebit(getTransactionCountByWeek(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList()));
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodCredit(getTransactionCountByWeek(newTransaction));
+
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodDebit(getTransactionCountByWeek(newTransaction));
             }
             case MONTH -> {
-                operationTypeDynamics.setPeriodCredit(getTransactionCountByMonth(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList()));
-                operationTypeDynamics.setPeriodDebit(getTransactionCountByMonth(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList()));
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodCredit(getTransactionCountByMonth(newTransaction));
+
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodDebit(getTransactionCountByMonth(newTransaction));
             }
             case QUARTER -> {
-                operationTypeDynamics.setPeriodCredit(getTransactionCountByQuarter(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList()));
-                operationTypeDynamics.setPeriodDebit(getTransactionCountByQuarter(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList()));
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodCredit(getTransactionCountByQuarter(newTransaction));
+
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodDebit(getTransactionCountByQuarter(newTransaction));
             }
             case YEAR -> {
-                operationTypeDynamics.setPeriodCredit(getTransactionCountByYear(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList()));
-                operationTypeDynamics.setPeriodDebit(getTransactionCountByYear(transactions
-                        .stream().filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList()));
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.CREDIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodCredit(getTransactionCountByYear(newTransaction));
+
+                newTransaction = new ArrayList<>(transactions.stream()
+                        .filter(x -> x.getTransactionType().equals(TransactionType.DEBIT)).toList());
+                newTransaction.sort(Comparator.comparing(Transaction::getOperationDateTime));
+                operationTypeDynamics.setPeriodDebit(getTransactionCountByYear(newTransaction));
             }
         }
         return operationTypeDynamics;
@@ -136,68 +153,56 @@ public class TransactionDashboardService {
     }
 
 
-    public SortedMap<String, Long> getTransactionCountByMonth(List<Transaction> transactions) {
-        return transactions.stream()
-                .collect(Collectors.groupingBy(
-                        transaction -> formatMonth(transaction.getOperationDateTime().toLocalDate()),
-                        Collectors.counting()
-                )).entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey()) // Сортировка по ключу
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1, // В случае коллизии, берём первое значение
-                        TreeMap::new // Используем TreeMap для сортировки
-                ));
+    public Map<String, Long> getTransactionCountByMonth(List<Transaction> transactions) {
+        Map<String, Long> occurrenceMap = new LinkedHashMap<>();
+        for (Transaction t : transactions) {
+            String s = formatMonth(t.getOperationDateTime().toLocalDate());
+            if (occurrenceMap.containsKey(s)) {
+                occurrenceMap.put(s, occurrenceMap.get(s) + 1);
+            } else {
+                occurrenceMap.put(s, 1L);
+            }
+        }
+        return occurrenceMap;
     }
 
-    public SortedMap<String, Long> getTransactionCountByQuarter(List<Transaction> transactions) {
-        return transactions.stream()
-                .collect(Collectors.groupingBy(
-                        transaction -> String.valueOf(getQuarter(transaction.getOperationDateTime().toLocalDate())),
-                        Collectors.counting()
-                )).entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        TreeMap::new
-                ));
+    public Map<String, Long> getTransactionCountByQuarter(List<Transaction> transactions) {
+        Map<String, Long> occurrenceMap = new LinkedHashMap<>();
+        for (Transaction t : transactions) {
+            String s = String.valueOf(getQuarter(t.getOperationDateTime().toLocalDate()));
+            if (occurrenceMap.containsKey(s)) {
+                occurrenceMap.put(s, occurrenceMap.get(s) + 1);
+            } else {
+                occurrenceMap.put(s, 1L);
+            }
+        }
+        return occurrenceMap;
     }
 
-    public SortedMap<String, Long> getTransactionCountByWeek(List<Transaction> transactions) {
-        return transactions.stream()
-                .collect(Collectors.groupingBy(
-                        transaction -> getWeekOfYear(transaction.getOperationDateTime().toLocalDate()),
-                        Collectors.counting()
-                )).entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        TreeMap::new
-                ));
+    public Map<String, Long> getTransactionCountByWeek(List<Transaction> transactions) {
+        Map<String, Long> occurrenceMap = new LinkedHashMap<>();
+        for (Transaction t : transactions) {
+            String s = getWeekOfYear(t.getOperationDateTime().toLocalDate());
+            if (occurrenceMap.containsKey(s)) {
+                occurrenceMap.put(s, occurrenceMap.get(s) + 1);
+            } else {
+                occurrenceMap.put(s, 1L);
+            }
+        }
+        return occurrenceMap;
     }
 
-    public SortedMap<String, Long> getTransactionCountByYear(List<Transaction> transactions) {
-        return transactions.stream()
-                .collect(Collectors.groupingBy(
-                        transaction -> String.valueOf(transaction.getOperationDateTime().toLocalDate().getYear()),
-                        Collectors.counting()
-                )).entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        TreeMap::new
-                ));
+    public Map<String, Long> getTransactionCountByYear(List<Transaction> transactions) {
+        Map<String, Long> occurrenceMap = new LinkedHashMap<>();
+        for (Transaction t : transactions) {
+            String s = String.valueOf(t.getOperationDateTime().toLocalDate().getYear());
+            if (occurrenceMap.containsKey(s)) {
+                occurrenceMap.put(s, occurrenceMap.get(s) + 1);
+            } else {
+                occurrenceMap.put(s, 1L);
+            }
+        }
+        return occurrenceMap;
     }
 
     private String formatMonth(LocalDate date) {

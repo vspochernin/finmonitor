@@ -80,4 +80,12 @@ public class Transaction {
     @Column(name = "receiver_phone")
     private String receiverPhone;
 
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "operationDateTime=" + operationDateTime +
+                ", id=" + id +
+                '}';
+    }
 }
