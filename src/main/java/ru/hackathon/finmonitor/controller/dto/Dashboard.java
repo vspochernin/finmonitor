@@ -4,9 +4,7 @@ import lombok.Data;
 import ru.hackathon.finmonitor.model.Bank;
 import ru.hackathon.finmonitor.model.Category;
 import ru.hackathon.finmonitor.model.Period;
-import ru.hackathon.finmonitor.model.Transaction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
