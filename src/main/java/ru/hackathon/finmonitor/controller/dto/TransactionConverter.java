@@ -1,19 +1,28 @@
 package ru.hackathon.finmonitor.controller.dto;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hackathon.finmonitor.model.Account;
 import ru.hackathon.finmonitor.model.Bank;
 import ru.hackathon.finmonitor.model.Category;
 import ru.hackathon.finmonitor.model.Transaction;
+import ru.hackathon.finmonitor.validation.TransactionValidator;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
+@RequiredArgsConstructor
 public class TransactionConverter {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final TransactionValidator validator;
 
     public TransactionDto toDto(Transaction entity) {
         TransactionDto dto = new TransactionDto();
         dto.setId(entity.getId());
         dto.setPersonType(entity.getPersonType());
-        dto.setOperationDateTime(entity.getOperationDateTime());
+        dto.setOperationDateTime(entity.getOperationDateTime().format(DATE_FORMATTER));
         dto.setTransactionType(entity.getTransactionType());
         dto.setComment(entity.getComment());
         dto.setAmount(entity.getAmount());
@@ -29,10 +38,14 @@ public class TransactionConverter {
     }
 
     public Transaction toEntity(TransactionDto dto) {
+        validator.validate(dto);
+
         Transaction entity = new Transaction();
         entity.setId(dto.getId());
         entity.setPersonType(dto.getPersonType());
-        entity.setOperationDateTime(dto.getOperationDateTime());
+        entity.setOperationDateTime(LocalDateTime.parse(
+                dto.getOperationDateTime() + " 00:00",
+                DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
         entity.setTransactionType(dto.getTransactionType());
         entity.setComment(dto.getComment());
         entity.setAmount(dto.getAmount());
@@ -51,8 +64,12 @@ public class TransactionConverter {
      * patch‑update существующей Entity данными из DTO
      */
     public void copyToEntity(TransactionDto src, Transaction target) {
+        validator.validate(src);
+
         target.setPersonType(src.getPersonType());
-        target.setOperationDateTime(src.getOperationDateTime());
+        target.setOperationDateTime(LocalDateTime.parse(
+                src.getOperationDateTime() + " 00:00",
+                DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
         target.setTransactionType(src.getTransactionType());
         target.setComment(src.getComment());
         target.setAmount(src.getAmount());
