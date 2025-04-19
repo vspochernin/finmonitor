@@ -88,7 +88,7 @@ public class TransactionController {
         return ResponseEntity.ok(transactionDashboardService.getOperationsTypeDynamics(result));
     }
 
-    @PostMapping("/dashboard/OperationTypeDynamics")
+    @PostMapping("/dashboard/IncomeExpensesComparison")
     public ResponseEntity<Dashboard.IncomeExpensesComparison> incomeExpensesComparisonResponseEntity(@RequestBody TransactionFilterDto filterDto) {
         List<Transaction> result = (service.filterTransactions(filterDto));
         return ResponseEntity.ok(transactionDashboardService.getIncomeExpensesComparison(result));
@@ -100,13 +100,13 @@ public class TransactionController {
         return ResponseEntity.ok(transactionDashboardService.getOperationCount(result));
     }
 
-    @PostMapping("/dashboard/OperationTypeDynamics")
+    @PostMapping("/dashboard/BankStatistics")
     public ResponseEntity<Dashboard.BankStatistics> bankStatisticsResponseEntity(@RequestBody TransactionFilterDto filterDto) {
         List<Transaction> result = (service.filterTransactions(filterDto));
         return ResponseEntity.ok(transactionDashboardService.getBankStatistics(result));
     }
 
-    @PostMapping("/dashboard/OperationTypeDynamics")
+    @PostMapping("/dashboard/CategoryStatistics")
     public ResponseEntity<Dashboard.CategoryStatistics> categoryStatisticsResponseEntity(@RequestBody TransactionFilterDto filterDto) {
         List<Transaction> result = (service.filterTransactions(filterDto));
         return ResponseEntity.ok(transactionDashboardService.getCategoryStatistics(result));

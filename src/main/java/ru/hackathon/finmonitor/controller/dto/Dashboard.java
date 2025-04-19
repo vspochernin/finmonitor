@@ -5,6 +5,7 @@ import ru.hackathon.finmonitor.model.Bank;
 import ru.hackathon.finmonitor.model.Category;
 import ru.hackathon.finmonitor.model.Period;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class Dashboard {
     // Сравнение количества поступивших средств и потраченных.
     @Data
     public static class IncomeExpensesComparison {
-        Long debit;
-        Long credit;
+        BigDecimal debit;
+        BigDecimal credit;
     }
 
     // Количество проведенных операций и отмененных операций.
@@ -40,15 +41,15 @@ public class Dashboard {
     // Статистика по банкам отправителя и банкам получателей.
     @Data
     public static class BankStatistics {
-        Map<Bank, Long> bankSender ;
-        Map<Bank, Long> bankReceiver ;
+        Map<Bank, BigDecimal> bankSender ;
+        Map<Bank, BigDecimal> bankReceiver ;
 
     }
 
     // Статистический отчет по категориям расходов и категориям доходов.
     @Data
     public static class CategoryStatistics {
-        Map<Category, Long> debitCategory;
-        Map<Category, Long> creditCategory;
+        Map<Category, BigDecimal> debitCategory;
+        Map<Category, BigDecimal> creditCategory;
     }
 }
