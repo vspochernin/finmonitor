@@ -2,6 +2,8 @@ package ru.hackathon.finmonitor.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,68 +45,13 @@ class TransactionServiceTest {
         assertEquals(TransactionStatus.DELETED, transaction.getStatus());
     }
 
-    @Test
-    void delete_ConfirmedTransaction_ThrowsException() {
+    @ParameterizedTest
+    @ValueSource(strings = {"CONFIRMED", "IN_PROCESS", "CANCELED", "COMPLETED", "RETURNED"})
+    void delete_ForbiddenStatus_ThrowsException(String statusName) {
         // Given.
         Transaction transaction = new Transaction();
         transaction.setId(1L);
-        transaction.setStatus(TransactionStatus.CONFIRMED);
-        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
-
-        // When & then.
-        FinmonitorException exception = assertThrows(FinmonitorException.class, () -> service.delete(1L));
-        assertEquals(FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN, exception.getErrorType());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void delete_InProcessTransaction_ThrowsException() {
-        // Given.
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setStatus(TransactionStatus.IN_PROCESS);
-        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
-
-        // When & then.
-        FinmonitorException exception = assertThrows(FinmonitorException.class, () -> service.delete(1L));
-        assertEquals(FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN, exception.getErrorType());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void delete_CancelledTransaction_ThrowsException() {
-        // Given.
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setStatus(TransactionStatus.CANCELED);
-        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
-
-        // When & then.
-        FinmonitorException exception = assertThrows(FinmonitorException.class, () -> service.delete(1L));
-        assertEquals(FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN, exception.getErrorType());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void delete_CompletedTransaction_ThrowsException() {
-        // Given.
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setStatus(TransactionStatus.COMPLETED);
-        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
-
-        // When & then.
-        FinmonitorException exception = assertThrows(FinmonitorException.class, () -> service.delete(1L));
-        assertEquals(FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN, exception.getErrorType());
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void delete_RefundTransaction_ThrowsException() {
-        // Given.
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setStatus(TransactionStatus.RETURNED);
+        transaction.setStatus(TransactionStatus.valueOf(statusName));
         when(repository.findById(1L)).thenReturn(Optional.of(transaction));
 
         // When & then.
@@ -115,7 +62,7 @@ class TransactionServiceTest {
 
     @Test
     void delete_NonExistentTransaction_ThrowsException() {
-        // Given
+        // Given.
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         // When & then.

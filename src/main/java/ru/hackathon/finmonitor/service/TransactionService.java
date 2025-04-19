@@ -69,8 +69,7 @@ public class TransactionService {
         if (isDeletionForbidden(transaction.getStatus())) {
             throw new FinmonitorException(
                     FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN,
-                    String.format("Удаление транзакции со статусом %s запрещено", transaction.getStatus())
-            );
+                    "Статус транзакции: " + transaction.getStatus());
         }
 
         transaction.setStatus(TransactionStatus.DELETED);
