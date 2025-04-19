@@ -14,6 +14,7 @@ public enum FinmonitorErrorType {
     INCORRECT_DATE(5, "Дата должна быть в формате DD.MM.YYYY", HttpStatus.BAD_REQUEST),
     INCORRECT_INN(6, "ИНН должен содержать 11 цифр", HttpStatus.BAD_REQUEST),
     INCORRECT_PHONE(7, "Телефон должен начинаться с +7 или 8 и содержать 11 цифр", HttpStatus.BAD_REQUEST),
+    TRANSACTION_DELETION_FORBIDDEN(8, "Удаление транзакции с данным статусом запрещено", HttpStatus.BAD_REQUEST),
     ;
 
     private final int id;

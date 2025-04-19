@@ -7,15 +7,24 @@ import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
 import ru.hackathon.finmonitor.exception.FinmonitorErrorType;
 import ru.hackathon.finmonitor.exception.FinmonitorException;
 import ru.hackathon.finmonitor.model.Transaction;
+import ru.hackathon.finmonitor.model.TransactionStatus;
 import ru.hackathon.finmonitor.repository.TransactionRepository;
 import ru.hackathon.finmonitor.repository.TransactionSpecification;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
+
+    private static final Set<TransactionStatus> FORBIDDEN_DELETION_STATUSES = Set.of(
+            TransactionStatus.CONFIRMED,
+            TransactionStatus.IN_PROCESS,
+            TransactionStatus.CANCELED,
+            TransactionStatus.COMPLETED,
+            TransactionStatus.RETURNED);
 
     private final TransactionRepository repository;
 
@@ -60,7 +69,19 @@ public class TransactionService {
 
     @Transactional
     public void delete(Long id) {
-        repository.deleteById(id);
+        Transaction transaction = repository.findById(id)
+                .orElseThrow(() -> new FinmonitorException(
+                        FinmonitorErrorType.NOT_FOUND,
+                        "Транзакция со следующим id не найдена: " + id));
+
+        if (FORBIDDEN_DELETION_STATUSES.contains(transaction.getStatus())) {
+            throw new FinmonitorException(
+                    FinmonitorErrorType.TRANSACTION_DELETION_FORBIDDEN,
+                    "Статус транзакции: " + transaction.getStatus());
+        }
+
+        transaction.setStatus(TransactionStatus.DELETED);
+        repository.save(transaction);
     }
 
     public List<Transaction> filterTransactions(TransactionFilterDto filterDto) {
