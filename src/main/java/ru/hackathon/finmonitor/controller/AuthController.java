@@ -1,18 +1,21 @@
 package ru.hackathon.finmonitor.controller;
 
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hackathon.finmonitor.dto.auth.LoginRequest;
-import ru.hackathon.finmonitor.dto.auth.LoginResponse;
 import ru.hackathon.finmonitor.dto.auth.RegisterRequest;
 import ru.hackathon.finmonitor.dto.auth.RegisterResponse;
 import ru.hackathon.finmonitor.security.JwtUtils;
@@ -29,7 +32,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> login(@ModelAttribute LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
@@ -42,7 +45,17 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .orElse("");
 
-        return ResponseEntity.ok(new LoginResponse(jwt, userDetails.getUsername(), role));
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofHours(2))
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body("Login successful");
     }
 
     @PostMapping("/register")
