@@ -26,6 +26,14 @@ public class TransactionService {
             TransactionStatus.COMPLETED,
             TransactionStatus.RETURNED);
 
+    private static final Set<TransactionStatus> FORBIDDEN_UPDATE_STATUSES = Set.of(
+            TransactionStatus.CONFIRMED,
+            TransactionStatus.IN_PROCESS,
+            TransactionStatus.CANCELED,
+            TransactionStatus.COMPLETED,
+            TransactionStatus.DELETED,
+            TransactionStatus.RETURNED);
+
     private final TransactionRepository repository;
 
     @Transactional(readOnly = true)
@@ -50,20 +58,24 @@ public class TransactionService {
                 .orElseThrow(() -> new FinmonitorException(
                         FinmonitorErrorType.NOT_FOUND,
                         "Транзакция со следующим id не найдена: " + id));
-        // копируем вручную или через BeanUtils / MapStruct
+
+        if (FORBIDDEN_UPDATE_STATUSES.contains(current.getStatus())) {
+            throw new FinmonitorException(
+                    FinmonitorErrorType.TRANSACTION_UPDATE_FORBIDDEN,
+                    "Редактирование транзакции с текущим статусом " + current.getStatus() + " не допускается.");
+        }
+
         current.setPersonType(changed.getPersonType());
         current.setOperationDateTime(changed.getOperationDateTime());
-        current.setTransactionType(changed.getTransactionType());
         current.setComment(changed.getComment());
         current.setAmount(changed.getAmount());
         current.setStatus(changed.getStatus());
         current.setSenderBank(changed.getSenderBank());
-        current.setSenderAccount(changed.getSenderAccount());
         current.setReceiverBank(changed.getReceiverBank());
-        current.setReceiverAccount(changed.getReceiverAccount());
         current.setReceiverInn(changed.getReceiverInn());
         current.setCategory(changed.getCategory());
         current.setReceiverPhone(changed.getReceiverPhone());
+
         return repository.save(current);
     }
 
