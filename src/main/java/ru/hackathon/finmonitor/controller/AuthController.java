@@ -1,5 +1,8 @@
 package ru.hackathon.finmonitor.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +31,12 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final AuthService authService;
 
+
+    @Operation(summary = "Авторизация пользователя", description = "Процесс аутентификации пользователя с использованием логина и пароля. Возвращает JWT токен.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешная авторизация, возвращён JWT токен"),
+            @ApiResponse(responseCode = "401", description = "Неверный логин или пароль")
+    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -45,6 +54,11 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(jwt, userDetails.getUsername(), role));
     }
 
+    @Operation(summary = "Регистрация нового пользователя", description = "Создание нового пользователя в системе. Возвращает информацию о зарегистрированном пользователе.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Пользователь успешно зарегистрирован"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные для регистрации")
+    })
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
