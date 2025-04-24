@@ -1,11 +1,10 @@
-
 # Описание проекта
 Проект включает в себя создание системы, где пользователи смогут вводить свои финансовые данные (доходы, расходы, категории транзакций) и получать визуализацию своих финансовых показателей. Система будет предоставлять возможность генерировать отчеты по заданным параметрам (например, за месяц или квартал) и анализировать тенденции.
 
 # Пользовательски требования
 ## Use-cases
 ### UML Диаграмма прецедентов
-![UML-Use-cases](img\use-case_mephi_fin_project.png)	
+![UML-Use-cases](img/use-case_mephi_fin_project.png)	
 
 ### UC1 — Работа с транзакциями
 | Пункт | Описание |
@@ -114,7 +113,7 @@
 ## Последовательность работы системы
 Общий бизнес процесс работы пользователя с системой описан на диаграмме деятельности:<br>
 
-![UML-activity](img\uml-activity_mephi_fin_project.png)  
+![UML-activity](img/uml-activity_mephi_fin_project.png)  
 
 
 # Модель данных
@@ -129,7 +128,7 @@
 - Финансовые транзакции
 
 ## ER-диаграмма
-![ERD](img\erd_mephi_fin_project.png)
+![ERD](img/ERD_mephi_fin_project.png)
 
 ## Описание таблиц
 
@@ -206,7 +205,7 @@
 - `transaction.category_id` → `category.id`
 
 # Архитектура приложения
-![UML-Architecture](img\architecture_mephi_fin_project.png)
+![UML-Architecture](img/architecture_mephi_fin_project.png)
 
 ## Общее описание архитектуры
 Система представляет собой централизованное веб-приложение, предоставляющее функции авторизации, управления транзакциями и генерации аналитических отчётов. Все модули находятся в рамках единого монолитного приложения, однако логически разделены на компоненты.
@@ -264,10 +263,10 @@
 Более подробно взаимодействие компонентов для сценариев использования описанных выше, можно посмотреть на диаграммах последовательности представленных ниже:
 
 ### 1. UML-sequence. Работа с транзакциями
-![UML-sequence_transactions](img\uml-sequence_transactions_mephi_fin_project.png)
+![UML-sequence_transactions](img/uml-sequence_transactions_mephi_fin_project.png)
 
 ### 2. Работа с дашбордами
-![UML-sequence_dashboards](img\uml-sequence_dashboards_mephi_fin_project.png)
+![UML-sequence_dashboards](img/uml-sequence_dashboards_mephi_fin_project.png)
 
 
 # Сценарии тестирования
