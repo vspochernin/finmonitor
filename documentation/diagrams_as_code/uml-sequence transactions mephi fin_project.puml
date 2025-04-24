@@ -1,0 +1,64 @@
+@startuml uml-sequence transactions mephi fin_project
+
+skinparam monochrome true
+skinparam backgroundColor #F9F9F9
+skinparam componentStyle filled
+
+participant "Web-client" as Web_client
+participant "Application Server" as Backend
+database "Database Server" as DB
+
+== Создание транзакции ==
+Web_client -> Backend : Создать транзакцию
+Backend -> Backend : Валидация введенных данных
+alt Валидный формат запроса
+    Backend -> DB : Запись новой транзакции
+    DB --> Backend : Подтверждение успешного создания
+    Backend --> Web_client : Подтверждение успешного создания
+else Невалидный формат
+    Backend --> Web_client : Ошибка валидации
+end
+
+== Редактирование транзакции ==
+Web_client -> Backend : Запрос на редактирование транзакции
+Backend -> Backend : Валидация параметров редактирования
+Backend -> DB : Поиск транзакции
+
+alt Транзакция найдена
+    DB --> Backend : Найденная запись
+    Backend -> Backend : Проверка статуса транзакции
+
+    alt Валидный статус
+        Backend -> DB : Запрос на редактирование транзакции
+        DB --> Backend : Подтверждение успешного редактирования
+        Backend --> Web_client : Подтверждение успешного редактирования
+    else Невалидный статус
+        Backend --> Web_client : Ошибка, недопустимый статус для редактирования
+    end
+
+else Транзакция не найдена
+    DB --> Backend : Запись не найдена
+    Backend --> Web_client : Сообщение об ошибке поиска транзакции
+end
+
+== Удаление транзакции ==
+Web_client -> Backend : Запрос на удаление транзакции
+Backend -> DB : Поиск транзакции
+
+alt Транзакция найдена
+    DB --> Backend : Найденная запись
+    Backend -> Backend : Проверка статуса транзакции
+
+    alt Валидный статус
+        Backend -> DB : Запрос на удаление транзакции
+        DB --> Backend : Подтверждение успешного удаления
+        Backend --> Web_client : Подтверждение успешного удаления
+    else Невалидный статус
+        Backend --> Web_client : Ошибка, недопустимый статус для удаления
+    end
+
+else Транзакция не найдена
+    DB --> Backend : Запись не найдена
+    Backend --> Web_client : Сообщение об ошибке поиска транзакции
+end
+@enduml

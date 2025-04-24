@@ -1,0 +1,31 @@
+@startuml uml-sequence dashboards mephi fin_project
+
+skinparam monochrome true
+skinparam backgroundColor #F9F9F9
+skinparam componentStyle filled
+
+participant "Web-client" as Web_client
+participant "Application Server" as Backend
+database "Database Server" as DB
+
+== Просмотр дашбордов ==
+Web_client -> Backend : Запрос на генерацию дашбордов
+
+alt Переданы параметры фильтрации
+    Backend -> Backend : Проверка параметров фильтрации
+    alt Валидные параметры фильтрации
+        Backend -> DB : Запрос на получение отфильтрованных \n транзакций пользователя
+        DB --> Backend : Отфильтрованные транзакции
+        Backend -> Backend : Генерация дашбордов
+        Backend --> Web_client : Передача файлов с данными дашбордов
+    else Невалидные параметры фильтрации
+        Backend --> Web_client : Ошибка валидации параметров фильтрации
+    end
+    else Не переданы параметры фильтрации
+    Backend -> DB : Запрос на получение транзакций пользователя
+    DB --> Backend : список транзакций
+    Backend -> Backend : Генерация дашбордов
+    Backend --> Web_client : Передача файлов с данными дашбордов
+end
+
+@enduml

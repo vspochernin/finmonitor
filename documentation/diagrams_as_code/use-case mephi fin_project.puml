@@ -1,0 +1,47 @@
+@startuml use-case mephi fin_project
+
+skinparam monochrome true
+skinparam backgroundColor #F9F9F9
+skinparam componentStyle filled
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Пользователь
+
+rectangle "Система финансового мониторинга и отчетности" {
+    (Работа с транзакциями) as UC1
+    (Создание транзакции) as UC1_1
+    (Редактирование транзакции) as UC1_2
+    (Удаление транзакции) as UC1_3
+
+    (Просмотр дашбордов) as UC2
+    (Фильтрация данных по банку отправителя) as UC2_1
+    (Фильтрация данных по банку получателя) as UC2_2
+    (Фильтрация данных по дате) as UC2_3
+    (Фильтрация данных по статусу) as UC2_4
+    (Фильтрация данных по инн) as UC2_5
+    (Фильтрация данных по сумме операции) as UC2_6
+    (Фильтрация данных по типу операции) as UC2_7
+    (Фильтрация данных по категории) as UC2_8
+}
+
+Пользователь --> UC1
+Пользователь --> UC2
+
+UC1 ..> UC1_1 : <<include>>
+UC1 ..> UC1_2 : <<include>>
+UC1 ..> UC1_3 : <<include>>
+
+UC2 <.. UC2_1 : <<extend>>
+UC2 <.. UC2_2 : <<extend>>
+UC2 <.. UC2_3 : <<extend>>
+UC2 <.. UC2_4 : <<extend>>
+UC2 <.. UC2_5 : <<extend>>
+UC2 <.. UC2_6 : <<extend>>
+UC2 <.. UC2_7 : <<extend>>
+UC2 <.. UC2_8 : <<extend>>
+@enduml
+
+
+
