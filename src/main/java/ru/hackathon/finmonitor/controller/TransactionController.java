@@ -3,7 +3,9 @@ package ru.hackathon.finmonitor.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +26,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class TransactionController {
 
     private final TransactionService service;
     private final TransactionConverter converter;
     private final TransactionDashboardService transactionDashboardService;
 
-    @Operation(summary = "Получить все транзакции", description = "Возвращает список всех сохранённых транзакций")
-    @GetMapping
-    public List<TransactionDto> getAll() {
-        return service.getAll()
+    @GetMapping("all/{limit}")
+    public List<TransactionDto> getAll(@PathVariable("limit") Integer limit) {
+        return service.getAll(limit)
                 .stream()
                 .map(converter::toDto)
                 .collect(Collectors.toList());
@@ -76,7 +78,7 @@ public class TransactionController {
     @Operation(summary = "Фильтрация транзакций", description = "Фильтрует транзакции по заданным критериям (даты, суммы, категории и т.д.)")
     @PostMapping("/filter")
     public ResponseEntity<List<TransactionDto>> filter(@RequestBody TransactionFilterDto filterDto) {
-        List<Transaction> result = service.filterTransactions(filterDto);
+        List<Transaction> result = service.filterTransactions(filterDto, filterDto.getLimit());
         return ResponseEntity.ok(result.stream().map(converter::toDto).collect(Collectors.toList()));
     }
 
