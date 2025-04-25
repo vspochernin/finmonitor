@@ -26,4 +26,6 @@ public class TransactionFilterDto {
     private TransactionType transactionType;
 
     private Long categoryId;
+
+    private Integer limit;
 }

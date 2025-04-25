@@ -1,6 +1,9 @@
 package ru.hackathon.finmonitor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hackathon.finmonitor.controller.dto.TransactionFilterDto;
@@ -36,9 +39,8 @@ public class TransactionService {
 
     private final TransactionRepository repository;
 
-    @Transactional(readOnly = true)
-    public List<Transaction> getAll() {
-        return repository.findAll();
+    public List<Transaction> getAll(Integer limit) {
+        return repository.findAll(PageRequest.of(0, limit)).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -97,7 +99,17 @@ public class TransactionService {
     }
 
     public List<Transaction> filterTransactions(TransactionFilterDto filterDto) {
+        return filterTransactions(filterDto, null);
+    }
+
+    public List<Transaction> filterTransactions(TransactionFilterDto filterDto, Integer limit) {
         var specification = TransactionSpecification.withFilters(filterDto);
-        return repository.findAll(specification).stream().toList();
+
+        if (limit != null) {
+            Pageable pageable = PageRequest.of(0, limit);
+            return repository.findAll(specification, pageable).getContent();
+        } else {
+            return repository.findAll(specification);
+        }
     }
 }
