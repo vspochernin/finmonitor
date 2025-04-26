@@ -1,7 +1,28 @@
 # finmonitor
 Проект «Финансовый мониторинг и отчетность» по дисциплине "Проектная практика" (хакатон). 2-й семестр 1-го курса МИФИ ИИКС РПО (2024-2025 уч. г).
 
-### Создание базы данных в докер контейнере:
+## Предварительные требования
+
+1. Установленные Docker и Docker Compose.
+2. Java 21 или выше.
+3. Maven.
+
+## Запуск проекта
+
+Для запуска проекта нужно:
+
+1. Находясь в корне проекта, запустить базу данных с помощью Docker:
+
 ```shell
-docker run --name FinmonitorDB   -e POSTGRES_USER=postgres   -e POSTGRES_PASSWORD=postgres   -e POSTGRES_DB=finmonitor   -p 5432:5432   -d postgres:13
+docker compose -f src/main/resources/db/docker-compose.yml up -d  
 ```
+
+2. Собрать и запустить приложение с помощью Maven:
+
+```shell
+mvn spring-boot:run
+```
+
+## Документация
+
+Подробная документация по проекту находится в следующем [файле](/documentation/documentation%20mephi%20fin_project.md).
