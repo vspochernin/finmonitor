@@ -1,0 +1,39 @@
+Table users {
+  id bigint [pk]
+  username varchar(255) [unique, not null]
+  password varchar(255) [not null]
+  role varchar(255) [not null]
+}
+
+Table bank {
+  id bigint [pk]
+  name varchar(255) [not null]
+}
+
+Table account {
+  id bigint [pk]
+  bank_id bigint [not null, ref: > bank.id]
+  account_number varchar(255) [not null]
+}
+
+Table category {
+  id bigint [pk]
+  name varchar(255) [not null]
+}
+
+Table transaction {
+  id bigint [pk]
+  person_type varchar(255) [not null]
+  operation_datetime timestamp [not null]
+  transaction_type varchar(255) [not null]
+  comment text
+  amount decimal(15,2) [not null]
+  status varchar(255) [not null]
+  sender_bank_id bigint [not null, ref: > bank.id]
+  sender_account_id bigint [not null, ref: > account.id]
+  receiver_bank_id bigint [not null, ref: > bank.id]
+  receiver_account_id bigint [not null, ref: > account.id]
+  receiver_inn varchar(255) [not null]
+  receiver_phone varchar(255)
+  category_id bigint [not null, ref: > category.id]
+}

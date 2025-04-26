@@ -1,0 +1,53 @@
+@startuml architecture mephi fin_project
+title Архитектура системы финансового мониторинга и отчетности
+
+' Внешний пользователь
+actor "Пользователь системы" as User
+
+frame "Система финансового мониторинга и отчетности" {
+  ' Веб-интерфейс / API
+  frame "Интерфейс взаимодействия системы (API)" {
+    [AuthController]
+    [TransactionController]
+    [ReportController]
+  }
+
+  ' Бизнес-логика (модули)
+  frame "Слой бизнес-логики" {
+    component AuthModule [
+      AuthModule
+      (Авторизация и роли)
+    ]
+
+    component TransactionModule [
+      TransactionModule
+      (Обработка транзакций)
+    ]
+
+    component ReportModule [
+      ReportModule 
+      (Генерация отчетов)
+    ]
+  }
+
+  frame "Слой данных" {
+    database "Центральная БД" as DB
+  }
+}
+
+' Взаимодействие пользователя
+User <--> AuthController : логин, токен
+User <--> TransactionController : создать/изменить\nтранзакции
+User <--> ReportController : запросить отчеты
+
+' Взаимодействие контроллеров с модулями
+AuthController <--> AuthModule
+TransactionController <--> TransactionModule
+ReportController <--> ReportModule
+
+' Доступ модулей к БД
+AuthModule <--> DB
+TransactionModule <--> DB
+ReportModule <-- DB
+
+@enduml
