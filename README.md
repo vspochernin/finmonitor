@@ -79,11 +79,10 @@ mvn spring-boot:run
 ## Итоговые артефакты демонстрации реализованного решения
 
 1. Реализованное веб-приложение: [GitHub репозиторий приложения](https://github.com/vspochernin/finmonitor).
-2. Демонстрация работы с входными данными: [видео-питч](https://drive.google.com/file/d/1RPB29l0nT5EWAWb5TTSYw3uF4k2-Agnu/view?usp=sharing).
-3. Отчеты о прохождении тестирования: часть ["Сценарии тестирования"](/documentation/documentation%20mephi%20fin_project.md#сценарии-тестирования) документации.
-4. Архитектура: часть ["Архитектура приложения"](/documentation/documentation%20mephi%20fin_project.md#архитектура-приложения) документации.
-5. Диаграммы (БД, пользовательские): диаграммы, находящиеся в [документации](/documentation/documentation%20mephi%20fin_project.md).
-6. Техническая документация: сама [документация](/documentation/documentation%20mephi%20fin_project.md).
-7. Unit-тесты: [код тестов](/src/test/java/ru/hackathon/finmonitor).
-8. Выгрузка из БД логов integration log: интеграции отсутствовали.
-9. Выгрузка аудита БД: [аудит БД](/documentation/Аудит%20БД.pdf).
+2. Отчеты о прохождении тестирования: часть ["Сценарии тестирования"](/documentation/documentation%20mephi%20fin_project.md#сценарии-тестирования) документации.
+3. Архитектура: часть ["Архитектура приложения"](/documentation/documentation%20mephi%20fin_project.md#архитектура-приложения) документации.
+4. Диаграммы (БД, пользовательские): диаграммы, находящиеся в [документации](/documentation/documentation%20mephi%20fin_project.md).
+5. Техническая документация: сама [документация](/documentation/documentation%20mephi%20fin_project.md).
+6. Unit-тесты: [код тестов](/src/test/java/ru/hackathon/finmonitor).
+7. Выгрузка из БД логов integration log: интеграции отсутствовали.
+8. Выгрузка аудита БД: [аудит БД](/documentation/Аудит%20БД.pdf).
